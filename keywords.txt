@@ -1,0 +1,21 @@
+gnl_button_t	KEYWORD1
+gnl_button_state_t	KEYWORD1
+gnl_button_info_t	KEYWORD1
+gnl_sob_t	KEYWORD1
+gnl_sob	KEYWORD1
+gnl_button	KEYWORD1
+
+
+gnl_button_new_and_setup	KEYWORD2
+gnl_button_setup	KEYWORD2
+gnl_button_delete	KEYWORD2
+gnl_button_begin	KEYWORD2
+gnl_button_update	KEYWORD2
+gnl_sob_setup	KEYWORD2
+gnl_sob_new_and_setup	KEYWORD2
+gnl_sob_delete	KEYWORD2
+gnl_sob_add_button	KEYWORD2
+gnl_sob_begin	KEYWORD2
+gnl_sob_update	KEYWORD2
+
+
