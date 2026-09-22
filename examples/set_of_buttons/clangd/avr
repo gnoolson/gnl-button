@@ -1,0 +1,16 @@
+CompileFlags:
+  Remove:
+    - "-fno-fat-lto-objects"
+    - "-fno-tree-scev-cprop"
+    - "-mrelax"
+    - "-flto"
+  Add:
+    - "-isystem"
+    - -I/data/project/arduino/libraries/gnl-timer/src
+    - -I/data/project/arduino/libraries/gnl-button/src
+
+Diagnostics:
+  Suppress:
+    - "drv_unknown_argument"
+    - "pp_file_not_found"
+

@@ -30,7 +30,7 @@ static void button_callback(int8_t button_id, bool long_press, void* p_value) {
 void gnl_sob_setup(gnl_sob_t* p_sob, uint8_t length, uint8_t logic_level) {
     p_sob->length = length;
     p_sob->logic_level = logic_level;
-    p_sob->delay = 100;
+    p_sob->delay_ms = 100;
     p_sob->index = 0;
     p_sob->p_buttons = malloc(sizeof(void*) * length);
     p_sob->p_infos = malloc(sizeof(void*) * length);
@@ -56,6 +56,18 @@ gnl_sob_t* gnl_sob_new_and_setup(uint8_t length, uint8_t logic_level) {
     return p_sob;
 }
 
+void gnl_sob_set_time_settings(gnl_sob_t* p_sob, uint16_t long_press_ms, uint16_t debounce_ms, uint16_t delay_ms) {
+    for (int i = 0; i < p_sob->length; i++) {
+        gnl_button_set_time_settings(p_sob->p_buttons[i], long_press_ms, debounce_ms);
+    }
+
+    p_sob->delay_ms = delay_ms;
+
+    if (p_sob->p_timer != NULL) {
+        gnl_timer_setup(p_sob->p_timer, p_sob->delay_ms, false);
+    }
+}
+
 bool gnl_sob_add_button(gnl_sob_t* p_sob, int8_t button_id, uint8_t dev_pin) {
     if (p_sob->index == p_sob->length)
         return false;
@@ -69,11 +81,11 @@ bool gnl_sob_add_button(gnl_sob_t* p_sob, int8_t button_id, uint8_t dev_pin) {
     return true;
 }
 
-void gnl_sob_begin(gnl_sob_t* p_sob) {
-    p_sob->p_timer = gnl_timer_new_and_setup(p_sob->delay, false);
+void gnl_sob_begin(gnl_sob_t* p_sob, gnl_button_pull_mode_t pull_mode) {
+    p_sob->p_timer = gnl_timer_new_and_setup(p_sob->delay_ms, false);
 
     for (int i = 0; i < p_sob->length; i++) {
-        gnl_button_begin(p_sob->p_buttons[i]);
+        gnl_button_begin(p_sob->p_buttons[i], pull_mode);
     }
 }
 

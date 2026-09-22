@@ -3,13 +3,13 @@
  *
  * Created on: Apr 14, 2026
  *     Author: Gnoolson
- *    Version: 1.0.0
+ *    Version: 2.0.0
  */
 #include "gnl_button.h"
 
 static bool is_debounce_after_release(gnl_button_t* p_button) {
     uint32_t now = millis();
-    return now - p_button->last_action_ts < p_button->debounce_time;
+    return now - p_button->last_action_ts < p_button->debounce_ms;
 }
 
 static bool has_button_state_changed(gnl_button_t* p_button, bool actual_button_state) {
@@ -18,7 +18,7 @@ static bool has_button_state_changed(gnl_button_t* p_button, bool actual_button_
 
 static bool is_debounce_after_press(gnl_button_t* p_button) {
     uint32_t now = millis();
-    return now - p_button->debounce_time < p_button->pressed_ts;
+    return now - p_button->debounce_ms < p_button->pressed_ts;
 }
 
 static bool has_press_started(gnl_button_t* p_button) {
@@ -31,7 +31,7 @@ static bool is_button_released(bool actual_button_state) {
 
 static bool should_execute_callback(gnl_button_t* p_button) {
     uint32_t now = millis();
-    return now - p_button->pressed_ts < p_button->long_press_time;
+    return now - p_button->pressed_ts < p_button->long_press_ms;
 }
 
 static void execute_callback(gnl_button_t* p_button, void (*p_button_callback)(int8_t button_id, bool long_press, void* p_value), void* p_value) {
@@ -60,7 +60,7 @@ static void start_release(gnl_button_t* p_button) {
 
 static bool should_execute_callback_long_press(gnl_button_t* p_button) {
     uint32_t now = millis();
-    return now - p_button->pressed_ts > p_button->long_press_time;
+    return now - p_button->pressed_ts > p_button->long_press_ms;
 }
 
 static void execute_callback_long_press(gnl_button_t* p_button, void (*p_button_callback)(int8_t button_id, bool long_press, void* p_value), void* p_value) {
@@ -86,8 +86,8 @@ void gnl_button_setup(gnl_button_t* p_button, int8_t id, uint8_t dev_pin, uint8_
     p_button->last_action_ts = 0;
     p_button->state = false;
     p_button->logic_level = logic_level;
-    p_button->long_press_time = 1000;
-    p_button->debounce_time = 200;
+    p_button->long_press_ms = 1000;
+    p_button->debounce_ms = 200;
 }
 
 gnl_button_t* gnl_button_new_and_setup(int8_t id, uint8_t dev_pin, uint8_t logic_level) {
@@ -96,12 +96,23 @@ gnl_button_t* gnl_button_new_and_setup(int8_t id, uint8_t dev_pin, uint8_t logic
     return p_button;
 }
 
+void gnl_button_set_time_settings(gnl_button_t* p_button, uint16_t long_press_ms, uint16_t debounce_ms) {
+    p_button->long_press_ms = long_press_ms;
+    p_button->debounce_ms = debounce_ms;
+}
+
 void gnl_button_delete(gnl_button_t* p_button) {
     free(p_button);
 }
 
-void gnl_button_begin(gnl_button_t* p_button) {
-    pinMode(p_button->dev_pin, INPUT);
+void gnl_button_begin(gnl_button_t* p_button, gnl_button_pull_mode_t pull_mode) {
+    if (pull_mode == GNL_PULL_UP) {
+        pinMode(p_button->dev_pin, INPUT_PULLUP);
+    } else if (pull_mode == GNL_PULL_DOWN) {
+        pinMode(p_button->dev_pin, INPUT_PULLDOWN);
+    } else {
+        pinMode(p_button->dev_pin, INPUT);
+    }
 }
 
 void gnl_button_update(gnl_button_t* p_button, void (*p_button_callback)(int8_t button_id, bool long_press, void* p_value), void* p_value) {

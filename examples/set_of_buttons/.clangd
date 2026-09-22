@@ -15,6 +15,10 @@ CompileFlags:
     - "--target=esp*"
     - "-m*"
   Add:
-    - --target=thumbv7em-none-eabi
-    - -I/data/project/arduino/libraries/gnl-button/src
     - -I/data/project/arduino/libraries/gnl-timer/src
+
+Diagnostics:
+  Suppress:
+    - "drv_unknown_argument"
+    - "pp_file_not_found"
+

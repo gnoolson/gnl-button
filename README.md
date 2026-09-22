@@ -10,9 +10,7 @@ The library does not use interrupts and is designed for polling-based input hand
 
 **Requirement:** [gnl-timer](https://github.com/gnoolson/gnl-timer)
 
-The library supports two button connection configurations:  
-- high logic level for active state  
-- low logic level for active state  
+**Connection configurations**
 
 <img src="assets/circuit.png" width="440" height="600" alt="circuit" />
 
@@ -27,6 +25,11 @@ void gnl_button_setup(gnl_button_t* p_button, int8_t id, uint8_t dev_pin, uint8_
 ```
 // Allocate and initialize a new button on the heap  
 gnl_button_t* gnl_button_new_and_setup(int8_t id, uint8_t dev_pin, uint8_t logic_level);
+```
+
+```
+// Setting the long-press and debounce times (default values: long_press = 1000ms; debounce = 200ms)
+void gnl_button_set_time_settings(gnl_button_t* p_button, uint16_t long_press_ms, uint16_t debounce_ms);
 ```
 
 ```
@@ -63,8 +66,8 @@ void setup() {
     p_button_1 = gnl_button_new_and_setup(1, 18, LOW);
     p_button_2 = gnl_button_new_and_setup(2, 19, LOW);
 
-    gnl_button_begin(p_button_1);
-    gnl_button_begin(p_button_2);
+    gnl_button_begin(p_button_1, GNL_PULL_UP);
+    gnl_button_begin(p_button_2, GNL_PULL_UP);
 }
 
 void callback(int8_t button_id, bool long_press, void* p_value) {
@@ -100,6 +103,11 @@ void gnl_sob_setup(gnl_sob_t* p_sob, uint8_t length, uint8_t logic_level);
 ```
 // Allocate and initialize a new set of buttons on the heap  
 gnl_sob_t* gnl_sob_new_and_setup(uint8_t length, uint8_t logic_level);
+```
+
+```
+// Setting the long-press time, debounce time, and callback delay (default values: long_press = 1000ms; debounce = 200ms; delay_ms = 100ms)
+void gnl_sob_set_time_settings(gnl_sob_t* p_sob, uint16_t long_press_ms, uint16_t debounce_ms, uint16_t delay_ms);
 ```
 
 ```
@@ -142,7 +150,7 @@ void setup() {
     gnl_sob_add_button(p_sob, 1, 18);
     gnl_sob_add_button(p_sob, 2, 19);
 
-    gnl_sob_begin(p_sob);
+    gnl_sob_begin(p_sob, GNL_PULL_UP);
 }
 
 void callback(gnl_button_info_t** p_infos, uint8_t length, void* p_value) {

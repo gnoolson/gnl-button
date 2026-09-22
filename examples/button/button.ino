@@ -8,11 +8,18 @@ gnl_button_t* p_button_2 = NULL;
 void setup() {
     Serial.begin(9600);
 
-    p_button_1 = gnl_button_new_and_setup(1, 18, LOW);  // id: 1; pin: 18; logic level: LOW;
-    p_button_2 = gnl_button_new_and_setup(2, 19, LOW);  // id: 2; pin: 19; logic level: LOW;
+    p_button_1 = gnl_button_new_and_setup(1, 18, LOW);  // id: 1; pin: 18; Logic level for the pressed button state: LOW;
+    p_button_2 = gnl_button_new_and_setup(2, 19, LOW);  // id: 2; pin: 19; Logic level for the pressed button state: LOW;
 
-    gnl_button_begin(p_button_1);
-    gnl_button_begin(p_button_2);
+    /*
+     * GNL_PULL_NONE - Do not use the internal resistor
+     * GNL_PULL_UP   - Pull-up of an internal resistor to the positive rail
+     * GNL_PULL_DOWN - Pull the internal resistor to ground (if the MCU supports it)
+     * */
+    gnl_button_begin(p_button_1, GNL_PULL_UP);
+    gnl_button_begin(p_button_2, GNL_PULL_UP);
+    
+    Serial.println(F("button.ino"));
 }
 
 void callback(int8_t button_id, bool long_press, void* p_value) {
